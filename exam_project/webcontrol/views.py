@@ -7,7 +7,7 @@ def dz_exam_list(request):
     published_exams = DzExam.objects.filter(is_public=True).order_by('-exam_date')
     context = {
         'full_name': 'Дмитрий Закс',
-        'group_number': 'Группа 241-671', # Замените на номер вашей группы
+        'group_number': 'Группа 241-671',
         'exams': published_exams
     }
 
