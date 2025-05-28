@@ -1,0 +1,70 @@
+{# exam_project/webcontrol/templates/webcontrol/dzexam_list.html #}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экзамены ДЗ - {{ full_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background-color: #f4f4f4; color: #333; }
+        h1, h2 { color: #2c3e50; }
+        h1 { text-align: center; margin-bottom: 30px; }
+        p { margin: 10px 0; }
+        .info-block { background-color: #e0e0e0; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .exam-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .exam-item { background-color: #ffffff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s ease-in-out; }
+        .exam-item:hover { transform: translateY(-5px); }
+        .exam-item h3 { margin-top: 0; color: #34495e; }
+        .exam-label { font-weight: bold; margin-right: 5px; color: #555; }
+        .exam-image { max-width: 100%; height: auto; display: block; margin-top: 15px; border-radius: 4px; border: 1px solid #eee; }
+        .no-exams { text-align: center; color: #777; font-style: italic; }
+        .user-list { list-style: none; padding: 0; margin: 0; }
+        .user-list li { display: inline-block; background-color: #e6f7ff; border: 1px solid #b3e0ff; padding: 3px 8px; margin-right: 5px; margin-bottom: 5px; border-radius: 3px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>Контрольная работа по веб-технологиям</h1>
+
+    <div class="info-block">
+        <p><span class="exam-label">Исполнитель:</span> {{ full_name }}</p>
+        <p><span class="exam-label">Группа:</span> {{ group_number }}</p>
+    </div>
+
+    <h2>Список опубликованных экзаменов</h2>
+
+    {% if exams %}
+        <div class="exam-container">
+            {% for exam in exams %}
+                <div class="exam-item">
+                    <h3>{{ exam.title }}</h3>
+                    <p><span class="exam-label">Дата создания записи:</span> {{ exam.created_at|date:"d.m.Y H:i" }}</p>
+                    <p><span class="exam-label">Дата проведения экзамена:</span> {{ exam.exam_date|date:"d.m.Y" }}</p>
+
+                    <p><span class="exam-label">Изображение задания:</span></p>
+                    {% if exam.exam_image %}
+                        <img src="{{ exam.exam_image.url }}" alt="Изображение задания к экзамену {{ exam.title }}" class="exam-image">
+                    {% else %}
+                        <p><em>(Изображение отсутствует)</em></p>
+                    {% endif %}
+
+                    <p><span class="exam-label">Пользователи, пишущие экзамен:</span></p>
+                    {% if exam.examinees.all %}
+                        <ul class="user-list">
+                            {% for user in exam.examinees.all %}
+                                <li>{{ user.get_full_name|default:user.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p><em>(Нет назначенных пользователей)</em></p>
+                    {% endif %}
+
+                    <p><span class="exam-label">Статус публикации:</span> {% if exam.is_public %}Опубликовано ✅{% else %}Не опубликовано ❌{% endif %}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-exams">На данный момент нет опубликованных экзаменов.</p>
+    {% endif %}
+</body>
+</html>
